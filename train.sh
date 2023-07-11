@@ -1,18 +1,13 @@
 #!/bin/bash
 
-# The name of the job
 #SBATCH -J train_dino
 
-# Format of the output filename: slurm-jobname.jobid.out
 #SBATCH --output=slurm-%x.%j.out
 
-# The job requires 1 compute node
 #SBATCH -N 1
 
-# The job requires 1 task per node
 #SBATCH --ntasks-per-node=4
 
-# The maximum walltime of the job is 5 minutes
 #SBATCH -t 6-12:00:00
 
 #SBATCH --mem=40G
@@ -22,19 +17,14 @@
 
 #SBATCH --partition=gpu
 
-# Indicates that you need one GPU node
 #SBATCH --gres=gpu:tesla:4
 #SBATCH --exclude=falcon3
-# Commands to execute go below
 
-# Load Python
 module load python/3.8.6
 
-# Activate your environment
 source mt_proj/bin/activate
 
 
-# prediction of translatiom from the last checkpoint
 python -m torch.distributed.launch --nproc_per_node=4 MT_project/dino/main_dino.py --arch vit_small \
                                                                                 --patch_size 16 \
                                                                                 --out_dim 65536 \
